@@ -1,17 +1,19 @@
 import socket
 import threading
-
+# Defining the IP address and port the server will listen on.
 SERVER_HOST = '127.0.0.1'
 SERVER_PORT = 65432
 clients = []
 
 def handle_client(conn):
+    # This function runs in a separate thread for each client.
+    # It receives incoming encrypted messages from one client and forwards them to all other connected clients.
     while True:
         try:
             message = conn.recv(4096)
             if not message:
                 break
-            # Log the ciphertext for every message received
+            # It log the ciphertext for every message received
             print(f"Server log - Encrypted message (bytes): {message[:100]}")
             for c in clients:
                 if c != conn:
@@ -23,7 +25,8 @@ def handle_client(conn):
         clients.remove(conn)
     conn.close()
     print("Client disconnected.")
-
+# This initializes and runs the socket server.
+# It waits for two clients (Alice and Bob) to connect and then relays encrypted messages between them.
 def start_server():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((SERVER_HOST, SERVER_PORT))
